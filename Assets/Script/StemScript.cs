@@ -212,10 +212,10 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
                 StopCoroutine(expansionRoutine);
             }
             expansionRoutine = StartCoroutine(Expander(true));
-            foreach(StemScript child in childrenSprouts)
+            /*foreach(StemScript child in childrenSprouts)
             {
                 child.ExpandWithChildren(1/CScale);
-            }
+            }*/
         }
     }
 

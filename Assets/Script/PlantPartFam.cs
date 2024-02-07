@@ -56,6 +56,19 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
     //    Instantiate(PlantPartSingleton.Instance.getPart(growthType), anchor, Quaternion.identity, transform);
     //}
 
+    protected int generation = 0;
+    public int GetGeneraton() { return generation; }
+    bool generationSet = false;
+    public void SetGeneration()
+    {
+        if (!generationSet) 
+        { 
+            generation = parentStem.GetGeneraton() + 1;
+            generationSet = true;
+        }
+    }
+
+
     protected int lvl = 1;
     protected float growthRate;
     protected float lvlUpCost;

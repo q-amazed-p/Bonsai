@@ -9,14 +9,17 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
     [SerializeField] CapsuleCollider2D myCollider;
 
     static float CScale = 0.91f;
+    static float defaultWidth = 0.31f;
+    static float defaultHeight = 1.89f;    //maintain both with prefab
 
     Coroutine expansionRoutine;
 
     public void NewStem(Transform anchor, Quaternion angle) //to be callled by parent
     {
         StemScript newStem = Instantiate(PlantPartSingleton.Instance.getPart(0), anchor.position, angle, anchor).GetComponent<StemScript>();
-        newStem.SetProportions(mySprite.size.x * CScale, mySprite.size.y * CScale, CScale);
         newStem.SetParent(this);
+        newStem.SetGeneration();
+        newStem.SetProportions();
         childrenSprouts.Add(newStem);
     }
 
@@ -25,6 +28,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         int orientation = Random.value > 0.5f? 1 : -1;
         LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, angle, anchor).GetComponent<LeafScript>();
         newLeaf.SetParent(this);
+        newLeaf.SetGeneration();
         
         if (orientation > 0)
         {
@@ -43,15 +47,15 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 
 
     bool proportionsSet = false;
-    public void SetProportions(float x, float y, float budScale)
+    public void SetProportions()
     {
         if (!proportionsSet)
         {
-            //add generation
-            width = x;
-            height = y;
+            float genFactor = Mathf.Pow(CScale, generation);
+            width = defaultWidth * genFactor;
+            height = defaultHeight * genFactor;
             proportionsSet = true;
-            mySpawnPoint.ScaleSprout(budScale);
+            mySpawnPoint.ScaleSprout(genFactor);
         }
         else
         {

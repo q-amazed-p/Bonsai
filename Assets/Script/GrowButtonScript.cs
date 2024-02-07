@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class GrowButtonScript : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] int buttonType;
+    [SerializeField] Collider2D myCollider;
     [SerializeField] PlantPartFam origin;           public void SetOrigin(PlantPartFam o) { origin = o; }
 
     SpriteRenderer[] mySprites;
@@ -26,6 +27,7 @@ public class GrowButtonScript : MonoBehaviour, IPointerClickHandler
         foreach(SpriteRenderer sr in mySprites)
         {
             sr.enabled = state;
+            myCollider.enabled = true;
         }
     }
 }

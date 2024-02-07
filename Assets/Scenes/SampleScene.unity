@@ -537,7 +537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1dcba7458f3f045b31a4a89df42b6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sun: 20
+  sun: 50
   treeBase: {fileID: 668752740}
 --- !u!4 &1065054278
 Transform:
@@ -870,22 +870,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 923449284035113886, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: growChoicePref
-      value: 
-      objectReference: {fileID: 2441694718297350378, guid: 1a9fe491a81235541a23e8b495f58005, type: 3}
-    - target: {fileID: 2282905896671160432, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3636031241242192634, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4294484670859898958, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4683414184497971524, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
       propertyPath: width
       value: 0.31
@@ -894,49 +878,9 @@ PrefabInstance:
       propertyPath: height
       value: 1.89
       objectReference: {fileID: 0}
-    - target: {fileID: 4683414184497971524, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: shade.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4683414184497971524, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: shade.b
-      value: 0.27058825
-      objectReference: {fileID: 0}
-    - target: {fileID: 4683414184497971524, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: shade.g
-      value: 0.6745098
-      objectReference: {fileID: 0}
-    - target: {fileID: 4683414184497971524, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: shade.r
-      value: 0.34117648
-      objectReference: {fileID: 0}
-    - target: {fileID: 5746106515424434624, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5746106515424434624, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_SortingOrder
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6856735246178648625, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
       propertyPath: m_Name
       value: Stem
-      objectReference: {fileID: 0}
-    - target: {fileID: 7653765425110470216, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 341031d2e5a18284d85ecd421657b075, type: 3}
-    - target: {fileID: 7653765425110470216, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_Color.b
-      value: 0.27058825
-      objectReference: {fileID: 0}
-    - target: {fileID: 7653765425110470216, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_Color.g
-      value: 0.6745098
-      objectReference: {fileID: 0}
-    - target: {fileID: 7653765425110470216, guid: 0b8ab8486f0e37f448d698d43f3de52c, type: 3}
-      propertyPath: m_Color.r
-      value: 0.34117648
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

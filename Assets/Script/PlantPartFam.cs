@@ -6,8 +6,11 @@ using UnityEngine.EventSystems;
 public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] protected SpriteRenderer mySprite;
+    public Collider2D _myCollider;
 
     [SerializeField] SpriteRenderer outline;
+
+    bool mature = false;                        public void Maturate() { mature = true; }
 
     protected StemScript parentStem;
     protected bool parentSet = false;
@@ -25,16 +28,17 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
     }
 
 
-
-    protected void Highlight()
+    public void ToggleShine(bool state)
     {
-        outline.enabled = true;
+        _myCollider.enabled = state;
+        outline.enabled = state;
     }
 
-    protected void Lowlight()
+    public void ToggleHighlight(bool state)
     {
-        outline.enabled = false;
+        outline.color = new Color(outline.color.r, outline.color.g, outline.color.b, state? 1 : 0.4f);
     }
+
 
     //public void OnPointerEnter(PointerEventData eventData)
     //{
@@ -101,7 +105,14 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
 
     protected virtual float CheapestBuy() { return lvlUpCost; }
 
-    protected virtual void RevealBuy() { }
+    protected virtual void RevealBuy() 
+    {
+        openForBusiness = true;
+    }
+    protected virtual void RevokeBuy()
+    {
+        openForBusiness = false;
+    }
 
     public virtual void BuyGeneral(int i) { }
 
@@ -126,17 +137,22 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
         growthStored = 0;
     }
 
+    protected virtual void Start()
+    {
+        _myCollider = GetComponent<Collider2D>();
+        Invoke("Maturate", 100 / SunSingleton.Instance.GetSun());
+    }
+
     void Update()
     {
-        if (SunSingleton.Instance.Tick)
+        if (SunSingleton.Instance.Tick && mature)
         {
             GainGrowrth(SunSingleton.Instance.GetSun() * growthRate);
             if (!openForBusiness)
             {
-                if(growthStored+ GrowthPoolSingleton.Instance.Growth > CheapestBuy())
+                if(growthStored + GrowthPoolSingleton.Instance.Growth >= CheapestBuy())
                 {
                     RevealBuy();
-                    openForBusiness = true;
                 }
             }
         }

@@ -22,7 +22,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 
     public void NewLeaf(Transform anchor, Quaternion angle)
     {
-        int orientation = Random.Range(0, 2);
+        int orientation = Random.value > 0.5f? 1 : -1;
         LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, angle, anchor).GetComponent<LeafScript>();
         newLeaf.SetParent(this);
         
@@ -88,7 +88,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
     void IncrementStem(Vector2 sizeChange)
     {
         mySprite.size += sizeChange;
-        mySpawnPoint.transform.localPosition += 0.92f * sizeChange.y * Vector3.up;
+        mySpawnPoint.transform.localPosition += 0.91f * sizeChange.y * Vector3.up;
     }
 
     public void ExpandWithChildren(float scale)
@@ -124,6 +124,13 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
             affordances.Add(growthStored + GrowthPoolSingleton.Instance.Growth > splitCost);
             affordances.Add(growthStored + GrowthPoolSingleton.Instance.Growth > leafCost);
         }
+
+        //temporary lvl bound condition
+        if (affordances[0])
+        {
+            if(parentStem != null){ if (parentStem.lvl <= lvl) { affordances[0] = false; } }
+        }
+
         return affordances;
     }
 
@@ -137,11 +144,19 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 
     protected override void RevealBuy()
     {
-        mySpawnPoint.ToggleSprout(true);
+        base.RevealBuy();
+        ToggleShine(true);
+
+        if (childrenSprouts.Count < 1 && growthStored+GrowthPoolSingleton.Instance.Growth >= splitCost)
+        {
+            mySpawnPoint.ToggleSprout(true);
+        }
     }
 
-    void ConcealBuy()
+    protected override void RevokeBuy()
     {
+        base.RevokeBuy();
+        ToggleShine(false);
         mySpawnPoint.ToggleSprout(false);
     }
 
@@ -166,6 +181,11 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
                 Prune();
                 break;
         }
+        if (CheapestBuy() > growthStored + GrowthPoolSingleton.Instance.Growth)
+        {
+            RevokeBuy();
+            ToggleHighlight(false);
+        }
     }
 
     void BuySplit()
@@ -174,11 +194,8 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         {
             NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, 25 + 20 * (Random.value) - 10));
             NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, -25 + 20 * (Random.value) - 10));
-            if (CheapestBuy() > growthStored + GrowthPoolSingleton.Instance.Growth)
-            {
-                ConcealBuy();
-            }
         }
+        mySpawnPoint.ToggleSprout(false);
     }
 
     void BuyLeaf()
@@ -186,11 +203,8 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         if (TryPayGrowth(leafCost))
         {
             NewLeaf(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, -35 + 10 * (Random.value) - 5));
-            if (CheapestBuy() > growthStored + GrowthPoolSingleton.Instance.Growth)
-            {
-                ConcealBuy();
-            }
         }
+        mySpawnPoint.ToggleSprout(false);
     }
 
     void BuyLevelUp()
@@ -242,13 +256,13 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 bool highlighted = false;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Highlight();
+        ToggleHighlight(true);
         highlighted = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Lowlight();
+        ToggleHighlight(false);
         highlighted = false;
     }
 
@@ -312,8 +326,9 @@ bool highlighted = false;
         
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         lvl = 1;
         lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
         growthRate = StemStats.Growth.AdvanceStat(lvl);

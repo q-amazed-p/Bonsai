@@ -21,9 +21,9 @@ public class CameraControl : MonoBehaviour
         {
             myCamera.orthographicSize -= Input.mouseScrollDelta.y;
 
-            if (Input.GetAxisRaw("Vertical") == 0 && Input.GetAxisRaw("Horizontal") == 0 && MathfExt.Vector3IsPlaneBoundBy(transform.position - 0.03f * Input.mouseScrollDelta.y * (transform.position - myCamera.ScreenToWorldPoint(Input.mousePosition)), -40, 40, -10, 40))
+            if (Input.GetAxisRaw("Vertical") == 0 && Input.GetAxisRaw("Horizontal") == 0 && MathfExt.Vector3IsPlaneBoundBy(transform.position - 0.05f * Input.mouseScrollDelta.y * (transform.position - myCamera.ScreenToWorldPoint(Input.mousePosition)), -40, 40, -10, 40))
             {
-                transform.position -= 0.03f * Input.mouseScrollDelta.y * (transform.position - myCamera.ScreenToWorldPoint(Input.mousePosition));
+                transform.position -= 0.05f * Input.mouseScrollDelta.y * (transform.position - myCamera.ScreenToWorldPoint(Input.mousePosition));
             }
             
         }

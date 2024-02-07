@@ -1,14 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using static UnityEngine.UI.Image;
 
 public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] SpawnPointScript mySpawnPoint;
+    [SerializeField] CapsuleCollider2D myCollider;
 
     static float CScale = 0.91f;
 
@@ -76,11 +74,14 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
             IncrementStem(new Vector2(width - w, height - h) * Time.deltaTime/ (100/SunSingleton.Instance.GetSun()));
             if (colored)
             {
-                mySprite.color += (shade - c) * Time.deltaTime;
+                mySprite.color += (shade - c) * Time.deltaTime / (100 / SunSingleton.Instance.GetSun());
             }
             yield return null;
         }
         mySpawnPoint.ScaleSprout(1 / CScale);
+        myCollider.offset = new Vector2 (0, height / 2);
+        myCollider.size = new Vector2 (width, height);
+        
         expansionRoutine = null;
     }
 
@@ -161,7 +162,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
                 BuyLeaf();
                 break;
 
-            case 3:
+            case 3:         //keep as the last option
                 Prune();
                 break;
         }

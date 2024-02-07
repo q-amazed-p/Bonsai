@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] protected SpriteRenderer mySprite;
+
     [SerializeField] SpriteRenderer outline;
 
     protected StemScript parentStem;

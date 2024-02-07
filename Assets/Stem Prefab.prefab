@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3141eae6e5fe10343b14083ba1628e2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mySprite: {fileID: 0}
+  sproutSprite: {fileID: 0}
   growChoicePref: {fileID: 2441694718297350378, guid: 1a9fe491a81235541a23e8b495f58005, type: 3}
 --- !u!1 &6168317474627056492
 GameObject:
@@ -183,6 +183,7 @@ MonoBehaviour:
   outline: {fileID: 7675908845705031009}
   growthStored: 0
   mySpawnPoint: {fileID: 923449284035113886}
+  myCollider: {fileID: 2282905896671160432}
   width: 0
   height: 0
 --- !u!212 &7653765425110470216

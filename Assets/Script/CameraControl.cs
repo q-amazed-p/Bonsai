@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,7 +15,7 @@ public class CameraControl : MonoBehaviour
 
     private void OnGUI()
     {
-        //CAMERA ZOOMING 0, 27
+        //CAMERA ZOOMING
 
         if(MathfExt.IsBoundBy(myCamera.orthographicSize - Input.mouseScrollDelta.y, 0, 27))
         {

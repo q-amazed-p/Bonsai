@@ -32,6 +32,15 @@ public static class MathfExt
         return Mathf.Abs(x-(max+min)/2) < (max-min)/2; 
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <param name="minX"></param>
+    /// <param name="maxX"></param>
+    /// <param name="minY"></param>
+    /// <param name="maxY"></param>
+    /// <returns></returns>
     public static bool Vector3IsPlaneBoundBy(Vector3 vector, float minX, float maxX, float minY, float maxY)
     {
         return IsBoundBy(vector.x, minX, maxX) && IsBoundBy(vector.y, minY, maxY);

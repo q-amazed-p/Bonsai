@@ -23,16 +23,22 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         childrenSprouts.Add(newStem);
     }
 
-    public void NewLeaf(Transform anchor, Quaternion angle)
+    public void NewLeaf(Transform anchor)
     {
         int orientation = Random.value > 0.5f? 1 : -1;
-        LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, angle, anchor).GetComponent<LeafScript>();
+        float rawAngle = -15 + 10 * (Random.value) - 5;
+        LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, Quaternion.identity, anchor).GetComponent<LeafScript>();
         newLeaf.SetParent(this);
         newLeaf.SetGeneration();
         
         if (orientation > 0)
         {
-            newLeaf.transform.localScale = new Vector3 (-1*newLeaf.transform.localScale.x, newLeaf.transform.localScale.y, newLeaf.transform.localScale.z);
+            //newLeaf.transform.localScale = new Vector3 (-1*newLeaf.transform.localScale.x, newLeaf.transform.localScale.y, newLeaf.transform.localScale.z);
+            newLeaf.transform.localRotation = Quaternion.Euler(0, 0, rawAngle);
+        }
+        else
+        {
+            newLeaf.transform.localRotation = Quaternion.Euler(0, 180, rawAngle);
             childrenSprouts.Add(null);
         }
         childrenSprouts.Add(newLeaf);
@@ -138,7 +144,19 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         return affordances;
     }
 
-    protected override float CheapestBuy()
+
+    protected override bool GainGrowrth(float gain)
+    {
+        bool capacityAvailable = base.GainGrowrth(gain);
+        if (!capacityAvailable)
+        {
+            GrowthPoolSingleton.Instance.Growth += 0.25 * (gain - maxStorage + growthStored);
+            growthStored = maxStorage;
+        }
+        return capacityAvailable;
+    }
+
+protected override float CheapestBuy()
     {
         float cheap = splitCost;
         if (leafCost < cheap) { cheap = leafCost; }
@@ -206,7 +224,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
     {
         if (TryPayGrowth(leafCost))
         {
-            NewLeaf(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, -35 + 10 * (Random.value) - 5));
+            NewLeaf(mySpawnPoint.transform);
         }
         mySpawnPoint.ToggleSprout(false);
     }
@@ -240,8 +258,8 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 
     void Prune()
     {
-        GrowthPoolSingleton.Instance.Growth += ScoreByPrunning();
-        parentStem.CutOffChild(this);
+        GrowthPoolSingleton.Instance.Growth += ScoreByPrunning();   
+        parentStem.CutOffChild(this);                            //FOR RELEASE: possible exploit, need to move this line up
         Destroy(this.gameObject);
     }
 
@@ -250,7 +268,10 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         float growthSum = base.ScoreByPrunning();
         foreach (PlantPartFam child in childrenSprouts)
         {
-            growthSum += child.ScoreByPrunning();
+            if (child != null)
+            {
+                growthSum += child.ScoreByPrunning();
+            }
         }
         return growthSum;
     }
@@ -302,7 +323,10 @@ bool highlighted = false;
         StartCoroutine(Sway(scale));
         foreach (PlantPartFam p in childrenSprouts)
         {
-            p.SwayTime(scale);
+            if (p != null)
+            {
+                p.SwayTime(scale);
+            }
         }
     }
 

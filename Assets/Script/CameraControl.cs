@@ -10,14 +10,14 @@ public class CameraControl : MonoBehaviour
 
     private void Awake()
     {
-        myCamera = GetComponent<Camera>();  
+        myCamera = GetComponent<Camera>();
     }
 
     private void OnGUI()
     {
         //CAMERA ZOOMING
 
-        if(MathfExt.IsBoundBy(myCamera.orthographicSize - Input.mouseScrollDelta.y, 0, 27))
+        if (MathfExt.IsBoundBy(myCamera.orthographicSize - Input.mouseScrollDelta.y, 0, 27))
         {
             myCamera.orthographicSize -= Input.mouseScrollDelta.y;
 
@@ -25,17 +25,24 @@ public class CameraControl : MonoBehaviour
             {
                 transform.position -= 0.05f * Input.mouseScrollDelta.y * (transform.position - myCamera.ScreenToWorldPoint(Input.mousePosition));
             }
-            
+
         }
 
         //CAMERA PANNING
 
-        if(MathfExt.Vector3IsPlaneBoundBy(transform.position + (Input.GetAxis("Vertical") * Vector3.up + Input.GetAxis("Horizontal") * Vector3.right) * myCamera.orthographicSize * Time.deltaTime * scrollSpeed, -40, 40, -10, 40))    //(transform.position.y + Input.GetAxis("Vertical") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed < 40 && transform.position.y + Input.GetAxis("Vertical") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed > -10 && transform.position.x + Input.GetAxis("Horizontal") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed < 40 && transform.position.x + Input.GetAxis("Horizontal") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed > -40)
+        if (MathfExt.Vector3IsPlaneBoundBy(transform.position + (Input.GetAxis("Vertical") * Vector3.up + Input.GetAxis("Horizontal") * Vector3.right) * myCamera.orthographicSize * Time.deltaTime * scrollSpeed, -40, 40, -10, 40))    //(transform.position.y + Input.GetAxis("Vertical") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed < 40 && transform.position.y + Input.GetAxis("Vertical") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed > -10 && transform.position.x + Input.GetAxis("Horizontal") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed < 40 && transform.position.x + Input.GetAxis("Horizontal") * myCamera.orthographicSize * Time.deltaTime * scrollSpeed > -40)
         {
-            transform.position += (Input.GetAxis("Vertical") * Vector3.up + Input.GetAxis("Horizontal") * Vector3.right)* myCamera.orthographicSize * Time.deltaTime * scrollSpeed;
+            transform.position += (Input.GetAxis("Vertical") * Vector3.up + Input.GetAxis("Horizontal") * Vector3.right) * myCamera.orthographicSize * Time.deltaTime * scrollSpeed;
+        }
+
+        //ESCAPE
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 
-    
+
 
 }

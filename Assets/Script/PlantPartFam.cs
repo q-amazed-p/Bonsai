@@ -103,17 +103,15 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
         else { return false; }
     }
 
-    protected void GainGrowrth(float gain)
+    protected virtual bool GainGrowrth(float gain)
     {
-        if(growthStored + gain < maxStorage)
+        bool capacityAvailable = growthStored + gain < maxStorage;
+        if (capacityAvailable)
         {
             growthStored += gain;
         }
-        else
-        {
-            GrowthPoolSingleton.Instance.Growth += 0.75*(gain - maxStorage + growthStored);
-            growthStored = maxStorage;
-        }
+
+        return capacityAvailable;
     }
 
     protected virtual float CheapestBuy() { return lvlUpCost; }

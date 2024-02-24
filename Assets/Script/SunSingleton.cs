@@ -6,12 +6,7 @@ public class SunSingleton : MonoBehaviour
 {
     private static SunSingleton _instance;
 
-    public static SunSingleton Instance
-    {
-        get => _instance;
-        private set => _instance = value;
-    }
-
+    public static SunSingleton Instance => _instance;
 
     [SerializeField] private float sun = 1;          public float GetSun() { return sun; }
 

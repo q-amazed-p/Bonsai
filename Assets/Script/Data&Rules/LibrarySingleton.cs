@@ -5,11 +5,7 @@ using UnityEngine;
 public class LibrarySingleton : MonoBehaviour
 {
     static LibrarySingleton _instance;
-    public static LibrarySingleton Instance
-    {
-        get => _instance;
-        private set => _instance = value;
-    }
+    public static LibrarySingleton Instance => _instance;
 
     [SerializeField] public GameObject GrowthChoice;
 

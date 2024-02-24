@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class StemScript : PlantPartFam, IPointerClickHandler
 {
     [SerializeField] SpawnPointScript mySpawnPoint;
     [SerializeField] CapsuleCollider2D myCollider;
@@ -14,16 +14,26 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
 
     Coroutine expansionRoutine;
 
-    public void NewStem(Transform anchor, Quaternion angle) //to be callled by parent
+    public static StemScript NewStem(Transform anchor, Quaternion angle, StemScript parentStem, float initialBoost)
+    {
+        StemScript newStem = Instantiate(PlantPartSingleton.Instance.getPart(0), anchor.position, angle, anchor).GetComponent<StemScript>();
+        newStem.SetParent(parentStem);
+        newStem.SetGeneration();
+        newStem.SetProportions();
+        newStem.InitializeBoost(initialBoost);
+        return newStem;
+    }
+
+    /*public void NewStem() //to be callled by parent
     {
         StemScript newStem = Instantiate(PlantPartSingleton.Instance.getPart(0), anchor.position, angle, anchor).GetComponent<StemScript>();
         newStem.SetParent(this);
         newStem.SetGeneration();
         newStem.SetProportions();
-        childrenSprouts.Add(newStem);
-    }
+        childrenSprouts.Add(newStem);        //called on result of the new static method above
+    }*/
 
-    public void NewLeaf(Transform anchor)
+    /*public void NewLeaf(Transform anchor)
     {
         int orientation = Random.value > 0.5f? 1 : -1;
         float rawAngle = -15 + 10 * (Random.value) - 5;
@@ -42,7 +52,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
             childrenSprouts.Add(null);
         }
         childrenSprouts.Add(newLeaf);
-    }
+    }*/
 
     List<PlantPartFam> childrenSprouts = new List<PlantPartFam>();      // 0 or 1 index are taken buy left/right sprout (not standarised yet)
 
@@ -135,10 +145,10 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
             affordances.Add(growthStored + GrowthPoolSingleton.Instance.Growth > leafCost);
         }
 
-        //temporary lvl bound condition
-        if (affordances[0])
+        //temporary lvl bound by parent lvl condition
+        if (affordances[0] && parentStem != null && parentStem.lvl <= lvl)
         {
-            if(parentStem != null){ if (parentStem.lvl <= lvl) { affordances[0] = false; } }
+            affordances[0] = false;
         }
 
         return affordances;
@@ -150,7 +160,7 @@ public class StemScript : PlantPartFam, IPointerEnterHandler, IPointerExitHandle
         bool capacityAvailable = base.GainGrowrth(gain);
         if (!capacityAvailable)
         {
-            GrowthPoolSingleton.Instance.Growth += 0.25 * (gain - maxStorage + growthStored);
+            GrowthPoolSingleton.Instance.Growth += 0.25 * (inheritedBoost * gain - maxStorage + growthStored);  //does or does not depend on inheritance???
             growthStored = maxStorage;
         }
         return capacityAvailable;
@@ -167,7 +177,6 @@ protected override float CheapestBuy()
     protected override void RevealBuy()
     {
         base.RevealBuy();
-        ToggleShine(true);
 
         if (childrenSprouts.Count < 1 && growthStored+GrowthPoolSingleton.Instance.Growth >= splitCost)
         {
@@ -178,7 +187,6 @@ protected override float CheapestBuy()
     protected override void RevokeBuy()
     {
         base.RevokeBuy();
-        ToggleShine(false);
         mySpawnPoint.ToggleSprout(false);
     }
 
@@ -214,8 +222,8 @@ protected override float CheapestBuy()
     {
         if (TryPayGrowth(splitCost))
         {
-            NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, 25 + 20 * (Random.value) - 10));
-            NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, -25 + 20 * (Random.value) - 10));
+            childrenSprouts.Add(StemScript.NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, 25 + 20 * (Random.value) - 10), this, inheritedBoost*boost));
+            childrenSprouts.Add(StemScript.NewStem(mySpawnPoint.transform, transform.rotation * Quaternion.Euler(0, 0, -25 + 20 * (Random.value) - 10), this, inheritedBoost*boost));
         }
         mySpawnPoint.ToggleSprout(false);
     }
@@ -224,23 +232,28 @@ protected override float CheapestBuy()
     {
         if (TryPayGrowth(leafCost))
         {
-            NewLeaf(mySpawnPoint.transform);
+            bool rightTilt = Random.value > 0.5f;
+            childrenSprouts.Add(LeafScript.NewLeaf(mySpawnPoint.transform, this, rightTilt, inheritedBoost*boost));
         }
         mySpawnPoint.ToggleSprout(false);
     }
 
-    void BuyLevelUp()
+    protected override bool BuyLevelUp()
     {
-        if (TryPayGrowth(lvlUpCost))
+        bool paySuccessful = base.BuyLevelUp();
+        if (paySuccessful)
         {
-            lvl++;
-            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
-            growthRate = StemStats.Growth.AdvanceStat(lvl);
-            maxStorage = StemStats.Storage.AdvanceStat(lvl);
             splitCost = StemStats.BranchCost.AdvanceStat(lvl);
             leafCost = StemStats.LeafCost.AdvanceStat(lvl);
+            {
+                float nextBoost = StemStats.Boost.AdvanceStat(lvl);
+                foreach (PlantPartFam child in childrenSprouts)
+                {
+                    child.ReadjustBoost(boost, nextBoost);
+                }
+            }
             boost = StemStats.Boost.AdvanceStat(lvl);
-            // offer boost
+
             width *= 1 / CScale;
             height *= 1 / CScale;
             shade = LibrarySingleton.Instance.GetLvlColour(lvl);
@@ -254,13 +267,7 @@ protected override float CheapestBuy()
                 child.ExpandWithChildren(1/CScale);
             }*/
         }
-    }
-
-    void Prune()
-    {
-        GrowthPoolSingleton.Instance.Growth += ScoreByPrunning();   
-        parentStem.CutOffChild(this);                            //FOR RELEASE: possible exploit, need to move this line up
-        Destroy(this.gameObject);
+        return paySuccessful;
     }
 
     public override float ScoreByPrunning()
@@ -275,21 +282,11 @@ protected override float CheapestBuy()
         }
         return growthSum;
     }
+
+
     
 
 //IPOINTER
-bool highlighted = false;
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        ToggleHighlight(true);
-        highlighted = true;
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        ToggleHighlight(false);
-        highlighted = false;
-    }
 
     public void OnPointerClick(PointerEventData eventData) 
     {
@@ -297,12 +294,6 @@ bool highlighted = false;
         {
             ChoiceUIScript newUI = Instantiate(LibrarySingleton.Instance.GrowthChoice, eventData.pointerCurrentRaycast.worldPosition, Quaternion.identity).GetComponent<ChoiceUIScript>();
             newUI.SetOrigin(this);
-
-            GrowButtonScript[] buttons = newUI.GetComponentsInChildren<GrowButtonScript>();
-            foreach (GrowButtonScript button in buttons)
-            {
-                button.SetOrigin(this);
-            }
         }
     }
 

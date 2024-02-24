@@ -5,12 +5,7 @@ using UnityEngine;
 public class PlantPartSingleton : MonoBehaviour
 {
     private static PlantPartSingleton _instance;
-
-    public static PlantPartSingleton Instance
-    {
-        get => _instance;
-        private set => _instance = value;
-    }
+    public static PlantPartSingleton Instance => _instance;
 
     private void Awake()
     {

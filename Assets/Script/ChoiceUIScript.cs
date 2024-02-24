@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class ChoiceUIScript : MonoBehaviour
 {
-    PlantPartFam origin;                 public void SetOrigin(PlantPartFam o) { origin = o; }
+    PlantPartFam origin;                 
+    public void SetOrigin(PlantPartFam o) 
+    { 
+        origin = o;
+        GrowButtonScript[] buttons = GetComponentsInChildren<GrowButtonScript>();
+        foreach (GrowButtonScript button in buttons)
+        {
+            button.SetOrigin(o);
+        }
+    }
 
     [SerializeField] GrowButtonScript[] buttons;
 

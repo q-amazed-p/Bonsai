@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitHandler
+public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] protected SpriteRenderer mySprite;
-    public Collider2D _myCollider;
+    protected Collider2D _myCollider;
 
-    [SerializeField] SpriteRenderer outline;
+    [SerializeField] protected SpriteRenderer outline;
 
-    bool mature = false;                        public void Maturate() { mature = true; }
+    bool mature = false;                        public void Maturate() => mature = true;
 
     protected StemScript parentStem;
     protected bool parentSet = false;
@@ -26,20 +26,7 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
             Debug.Log("Parents cannot be initialised again");
         }
     }
-
-
-    public void ToggleShine(bool state)
-    {
-        _myCollider.enabled = state;
-        outline.enabled = state;
-    }
-
-    public void ToggleHighlight(bool state)
-    {
-        outline.color = new Color(outline.color.r, outline.color.g, outline.color.b, state? 1 : 0.4f);
-    }
-
-
+    
     //public void OnPointerEnter(PointerEventData eventData)
     //{
     //    ShowOutline();
@@ -75,6 +62,10 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
     protected float maxStorage;
     [SerializeField]protected float growthStored;
 
+    protected float inheritedBoost=1;        //is modified on level up and on new plantPart creation
+    protected void InitializeBoost(float InitialBoost) => inheritedBoost = InitialBoost; 
+    public void ReadjustBoost(float prev, float next) => inheritedBoost = inheritedBoost * next / prev; 
+
     protected bool ChangeGrowthStored(float delta)
     {
         if (growthStored + delta < maxStorage && growthStored + delta > 0)
@@ -100,28 +91,30 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
             }
             return true;
         }
-        else { return false; }
+        else return false;
     }
 
     protected virtual bool GainGrowrth(float gain)
     {
-        bool capacityAvailable = growthStored + gain < maxStorage;
+        bool capacityAvailable = growthStored + inheritedBoost * gain < maxStorage;
         if (capacityAvailable)
         {
-            growthStored += gain;
+            growthStored += inheritedBoost*gain;
         }
 
         return capacityAvailable;
     }
 
-    protected virtual float CheapestBuy() { return lvlUpCost; }
+    protected virtual float CheapestBuy() => lvlUpCost;
 
     protected virtual void RevealBuy() 
     {
         openForBusiness = true;
+        ToggleShine(true);
     }
     protected virtual void RevokeBuy()
     {
+        ToggleShine(false);
         openForBusiness = false;
     }
 
@@ -134,12 +127,57 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
 
     bool openForBusiness = false;
 
+    protected virtual bool BuyLevelUp()
+    {
+        bool paySuccessful = TryPayGrowth(lvlUpCost);
+        if (paySuccessful)
+        {
+            lvl++;
+            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
+            growthRate = StemStats.Growth.AdvanceStat(lvl);
+            maxStorage = StemStats.Storage.AdvanceStat(lvl);
+        }
+        return paySuccessful;
+    }
+
+    protected void Prune()
+    {
+        GrowthPoolSingleton.Instance.Growth += ScoreByPrunning();
+        parentStem.CutOffChild(this);                                       //exploit on base stem
+        Destroy(gameObject);
+    }
 
     public virtual float ScoreByPrunning()           //Stems override to sum up from children
     {
         return growthStored;
     }
 
+    //IPOINTER
+    protected bool highlighted = false;
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        ToggleHighlight(true);
+        highlighted = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        ToggleHighlight(false);
+        highlighted = false;
+    }
+
+    public void ToggleHighlight(bool state)
+    {
+        outline.color = new Color(outline.color.r, outline.color.g, outline.color.b, state ? 1 : 0.4f);
+    }
+
+    public void ToggleShine(bool state)
+    {
+        _myCollider.enabled = state;
+        outline.enabled = state;
+    }
+
+    //WIND
     public virtual void SwayTime(float x) { }
 
 
@@ -148,6 +186,7 @@ public class PlantPartFam : MonoBehaviour//, IPointerEnterHandler, IPointerExitH
         growthStored = 0;
     }
 
+    //MONOBEHAVIOR
     protected virtual void Start()
     {
         _myCollider = GetComponent<Collider2D>();

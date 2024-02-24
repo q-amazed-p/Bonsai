@@ -6,13 +6,29 @@ using UnityEngine.EventSystems;
 
 public class LeafScript : PlantPartFam, IPointerClickHandler
 {
-    static float baseGrowthRate = 1;
-    static float baseLvlUpCost = 50;
-    static float baseMaxStorage = 100;
+    public static LeafScript NewLeaf(Transform anchor, StemScript parentStem, bool rightTilt, float initialBoost)
+    {
+        float rawAngle = -15 + 10 * (Random.value) - 5;
+        LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, Quaternion.identity, anchor).GetComponent<LeafScript>();
+        newLeaf.SetParent(parentStem);
+        newLeaf.SetGeneration();
+        newLeaf.InitializeBoost(initialBoost);
+
+        if (rightTilt)
+        {
+            //newLeaf.transform.localScale = new Vector3 (-1*newLeaf.transform.localScale.x, newLeaf.transform.localScale.y, newLeaf.transform.localScale.z);
+            newLeaf.transform.localRotation = Quaternion.Euler(0, 0, rawAngle);
+        }
+        else
+        {
+            newLeaf.transform.localRotation = Quaternion.Euler(0, 180, rawAngle);
+        }
+        return newLeaf;
+    }
 
     [SerializeField] GameObject myParticles;
 
-    void BuyLevelUp()
+    /*protected bool BuyLevelUp()
     {
         if (TryPayGrowth(lvlUpCost))
         {
@@ -21,7 +37,7 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
             growthRate = StemStats.Growth.AdvanceStat(lvl);
             maxStorage = StemStats.Storage.AdvanceStat(lvl);
         }
-    }
+    }*/
 
     bool storageFull = false;
     protected override bool GainGrowrth(float gain)
@@ -36,6 +52,27 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
         return capacityAvailable;
     }
 
+    public override void BuyGeneral(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                BuyLevelUp();
+                break;
+
+            case 3:         //keep as the last option
+                Prune();
+                break;
+        }
+        if (CheapestBuy() > growthStored + GrowthPoolSingleton.Instance.Growth)
+        {
+            RevokeBuy();
+            ToggleShine(false);
+        }
+    }
+
+
+    //IPOINTER
     public void OnPointerClick(PointerEventData eventData)
     {
         if(eventData.button == PointerEventData.InputButton.Right)
@@ -45,13 +82,19 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
                 GrowthPoolSingleton.Instance.Growth += growthStored;
                 growthStored = 0;
                 myParticles.SetActive(false);
-                _myCollider.enabled = false;
+                if(!outline.enabled) _myCollider.enabled = false;
                 storageFull = false;
             }
 
         }
+        else if (highlighted && eventData.button == PointerEventData.InputButton.Left)
+        {
+            ChoiceUIScript newUI = Instantiate(LibrarySingleton.Instance.GrowthChoice, eventData.pointerCurrentRaycast.worldPosition, Quaternion.identity).GetComponent<ChoiceUIScript>();
+            newUI.SetOrigin(this);
+        }
     }
 
+    //MONOBEHAVIOR
     private void Awake()
     {
 

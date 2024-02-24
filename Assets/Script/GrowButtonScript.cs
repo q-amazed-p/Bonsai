@@ -27,7 +27,7 @@ public class GrowButtonScript : MonoBehaviour, IPointerClickHandler
         foreach(SpriteRenderer sr in mySprites)
         {
             sr.enabled = state;
-            myCollider.enabled = true;
         }
+        myCollider.enabled = state;
     }
 }

@@ -105,7 +105,7 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
     {
         base.Start();
         lvl = 1;
-        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
+        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
         growthRate = StemStats.Growth.AdvanceStat(lvl);
         maxStorage = StemStats.Storage.AdvanceStat(lvl);
     }

@@ -10,6 +10,11 @@ public class LibrarySingleton : MonoBehaviour
     [SerializeField] public GameObject GrowthChoice;
 
 
+    [SerializeField] float generationScalingForCosts;
+    public float GenerationScalingForCosts => generationScalingForCosts;
+
+
+
     [SerializeField] Color[] levelColour;
     public Color GetLvlColour(int lvl)
     {

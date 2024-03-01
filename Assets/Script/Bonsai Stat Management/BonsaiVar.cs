@@ -22,4 +22,16 @@ public struct BonsaiVar
     }
 
 
+    /// <summary>
+    /// Implementation for Cost Variables
+    /// Provides scaling dependent on PlantPart generation
+    /// </summary>
+    /// <param name="lvl">the new level achieved</param>
+    /// <param name="generation">generation of PlantPart</param>
+    /// <param name="coefficient">scaling coefficient (should become constant after calibration)</param>
+    /// <returns></returns>
+    public float AdvanceStat(int lvl, int generation, float coefficient) 
+    {
+        return MathfExt.BonsaiFunct(MathfExt.BonsaiFunct(varBase, varScale, lvl), generation, coefficient) ;
+    }
 }

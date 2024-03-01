@@ -243,8 +243,8 @@ protected override float CheapestBuy()
         bool paySuccessful = base.BuyLevelUp();
         if (paySuccessful)
         {
-            splitCost = StemStats.BranchCost.AdvanceStat(lvl);
-            leafCost = StemStats.LeafCost.AdvanceStat(lvl);
+            splitCost = StemStats.BranchCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
+            leafCost = StemStats.LeafCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
             {
                 float nextBoost = StemStats.Boost.AdvanceStat(lvl);
                 foreach (PlantPartFam child in childrenSprouts)
@@ -349,11 +349,11 @@ protected override float CheapestBuy()
     {
         base.Start();
         lvl = 1;
-        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
+        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
         growthRate = StemStats.Growth.AdvanceStat(lvl);
         maxStorage = StemStats.Storage.AdvanceStat(lvl);
-        splitCost = StemStats.BranchCost.AdvanceStat(lvl);
-        leafCost = StemStats.LeafCost.AdvanceStat(lvl);
+        splitCost = StemStats.BranchCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
+        leafCost = StemStats.LeafCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
         boost = StemStats.Boost.AdvanceStat(lvl);
 
         if (expansionRoutine != null)

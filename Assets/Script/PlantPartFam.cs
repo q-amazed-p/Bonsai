@@ -55,7 +55,6 @@ public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         }
     }
 
-
     protected int lvl = 1;
     protected float growthRate;
     protected float lvlUpCost;
@@ -133,7 +132,7 @@ public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (paySuccessful)
         {
             lvl++;
-            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl);
+            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
             growthRate = StemStats.Growth.AdvanceStat(lvl);
             maxStorage = StemStats.Storage.AdvanceStat(lvl);
         }

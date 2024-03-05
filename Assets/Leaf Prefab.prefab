@@ -260,6 +260,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: ShapeModule.m_Scale.x
       value: 0.4
       objectReference: {fileID: 0}
@@ -280,6 +284,10 @@ PrefabInstance:
       value: 0.34906584
       objectReference: {fileID: 0}
     - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.sprites.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: RotationModule.x.minMaxState
       value: 3
       objectReference: {fileID: 0}
@@ -297,7 +305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 0.035
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: ShapeModule.m_MeshNormalOffset
@@ -323,6 +331,22 @@ PrefabInstance:
       propertyPath: InitialModule.gravityModifier.scalar
       value: 0.008
       objectReference: {fileID: 0}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.sprites.Array.data[0].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2eb6526aecaf4004ab9e890b29c98ae5, type: 3}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.sprites.Array.data[1].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 57273be61f18bea4abaf638d73cba230, type: 3}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.sprites.Array.data[2].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1e51acd99bfb5f041a5c8df34b1642d0, type: 3}
+    - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
+      propertyPath: UVModule.sprites.Array.data[3].sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1e51acd99bfb5f041a5c8df34b1642d0, type: 3}
     - target: {fileID: -1343982225937347801, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.atime0
       value: 13493
@@ -377,7 +401,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2634744737635233164, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8170904662505048044, guid: 1264c28e555a65842b138618f216c9c5, type: 3}
       propertyPath: m_LocalPosition.x

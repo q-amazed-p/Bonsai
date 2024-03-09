@@ -167,7 +167,7 @@ public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void ToggleHighlight(bool state)
     {
-        outline.color = new Color(outline.color.r, outline.color.g, outline.color.b, state ? 1 : 0.4f);
+        outline.color = new Color(outline.color.r, outline.color.g, outline.color.b, state ? 1 : 0.6f);
     }
 
     public void ToggleShine(bool state)

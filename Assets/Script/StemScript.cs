@@ -99,6 +99,7 @@ public class StemScript : PlantPartFam, IPointerClickHandler
             yield return null;
         }
         mySpawnPoint.ScaleSprout(1 / CScale);
+        outline.transform.localScale = Vector3.one * Mathf.Pow(1/CScale, 1 + lvl -generation);
         myCollider.offset = new Vector2 (0, height / 2);
         myCollider.size = new Vector2 (width, height);
         

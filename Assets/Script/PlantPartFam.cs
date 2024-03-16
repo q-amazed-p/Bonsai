@@ -62,8 +62,8 @@ public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     [SerializeField]protected float growthStored;
 
     protected float inheritedBoost=1;        //is modified on level up and on new plantPart creation
-    protected void InitializeBoost(float InitialBoost) => inheritedBoost = InitialBoost; 
-    public void ReadjustBoost(float prev, float next) => inheritedBoost = inheritedBoost * next / prev; 
+    protected void InitializeInheritedBoost(float InitialBoost) => inheritedBoost = InitialBoost; 
+    public void ReadjustInheritedBoost(float prev, float next) => inheritedBoost = inheritedBoost * next / prev; 
 
     protected bool ChangeGrowthStored(float delta)
     {
@@ -126,18 +126,7 @@ public class PlantPartFam : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     bool openForBusiness = false;
 
-    protected virtual bool BuyLevelUp()
-    {
-        bool paySuccessful = TryPayGrowth(lvlUpCost);
-        if (paySuccessful)
-        {
-            lvl++;
-            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
-            growthRate = StemStats.Growth.AdvanceStat(lvl);
-            maxStorage = StemStats.Storage.AdvanceStat(lvl);
-        }
-        return paySuccessful;
-    }
+    protected virtual void BuyLevelUp() { }
 
     protected void Prune()
     {

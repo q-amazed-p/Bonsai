@@ -25,6 +25,7 @@ public class PlantPartSingleton : MonoBehaviour
         return plantParts[idx];
     }
 
+    [Header("Branch Stats")]
     [SerializeField] float StemStorageBase;
     [SerializeField] float StemStorageScale;
     [SerializeField] float StemGrowthBase;
@@ -38,6 +39,7 @@ public class PlantPartSingleton : MonoBehaviour
     [SerializeField] float StemBoostBase;
     [SerializeField] float StemBoostScale;
 
+    [Header("Leaf Stats")]
     [SerializeField] float LeafStorageBase;
     [SerializeField] float LeafStorageScale;
     [SerializeField] float LeafGrowthBase;
@@ -45,6 +47,7 @@ public class PlantPartSingleton : MonoBehaviour
     [SerializeField] float LeafLevelCostBase;
     [SerializeField] float LeafLevelCostScale;
 
+    [Header("Flower Stats")]
     [SerializeField] float FlowerStorageBase;
     [SerializeField] float FlowerStorageScale;
     [SerializeField] float FlowerGrowthBase;

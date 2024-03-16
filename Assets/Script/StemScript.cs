@@ -20,7 +20,7 @@ public class StemScript : PlantPartFam, IPointerClickHandler
         newStem.SetParent(parentStem);
         newStem.SetGeneration();
         newStem.SetProportions();
-        newStem.InitializeBoost(initialBoost);
+        newStem.InitializeInheritedBoost(initialBoost);
         return newStem;
     }
 
@@ -55,7 +55,7 @@ public class StemScript : PlantPartFam, IPointerClickHandler
     }*/
 
     List<PlantPartFam> childrenSprouts = new List<PlantPartFam>();      // 0 or 1 index are taken buy left/right sprout (not standarised yet)
-
+                                                                         // This could better be a 2-element array
         public void CutOffChild(PlantPartFam child)
         {
             childrenSprouts.Remove(child);
@@ -167,7 +167,7 @@ public class StemScript : PlantPartFam, IPointerClickHandler
         return capacityAvailable;
     }
 
-protected override float CheapestBuy()
+    protected override float CheapestBuy()
     {
         float cheap = splitCost;
         if (leafCost < cheap) { cheap = leafCost; }
@@ -239,36 +239,40 @@ protected override float CheapestBuy()
         mySpawnPoint.ToggleSprout(false);
     }
 
-    protected override bool BuyLevelUp()
+    protected override void BuyLevelUp()
     {
-        bool paySuccessful = base.BuyLevelUp();
-        if (paySuccessful)
+        if (TryPayGrowth(lvlUpCost))
         {
+            lvl++;
+            lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts, true);
+            growthRate = StemStats.Growth.AdvanceStat(lvl);
+            maxStorage = StemStats.Storage.AdvanceStat(lvl);
             splitCost = StemStats.BranchCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
             leafCost = StemStats.LeafCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
-            {
-                float nextBoost = StemStats.Boost.AdvanceStat(lvl);
-                foreach (PlantPartFam child in childrenSprouts)
-                {
-                    child.ReadjustBoost(boost, nextBoost);
-                }
-            }
-            boost = StemStats.Boost.AdvanceStat(lvl);
+            boost = AdjustBoostToChildren();
 
             width *= 1 / CScale;
             height *= 1 / CScale;
             shade = LibrarySingleton.Instance.GetLvlColour(lvl);
-            if (expansionRoutine != null)
-            {
-                StopCoroutine(expansionRoutine);
-            }
+            if (expansionRoutine != null) StopCoroutine(expansionRoutine);
             expansionRoutine = StartCoroutine(Expander(true));
             /*foreach(StemScript child in childrenSprouts)
             {
                 child.ExpandWithChildren(1/CScale);
             }*/
         }
-        return paySuccessful;
+    }
+
+    float AdjustBoostToChildren() 
+    {
+        float nextBoost = StemStats.Boost.AdvanceStat(lvl);
+        foreach (PlantPartFam child in childrenSprouts)
+        {
+            child.ReadjustInheritedBoost(boost, nextBoost);
+            child.GetComponent<StemScript>()?.AdjustBoostToChildren();
+
+        }
+        return nextBoost;
     }
 
     public override float ScoreByPrunning()
@@ -283,9 +287,6 @@ protected override float CheapestBuy()
         }
         return growthSum;
     }
-
-
-    
 
 //IPOINTER
 
@@ -350,7 +351,7 @@ protected override float CheapestBuy()
     {
         base.Start();
         lvl = 1;
-        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
+        lvlUpCost = StemStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts, true);
         growthRate = StemStats.Growth.AdvanceStat(lvl);
         maxStorage = StemStats.Storage.AdvanceStat(lvl);
         splitCost = StemStats.BranchCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);

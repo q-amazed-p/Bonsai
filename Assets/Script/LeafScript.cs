@@ -12,7 +12,7 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
         LeafScript newLeaf = Instantiate(PlantPartSingleton.Instance.getPart(1), anchor.position, Quaternion.identity, anchor).GetComponent<LeafScript>();
         newLeaf.SetParent(parentStem);
         newLeaf.SetGeneration();
-        newLeaf.InitializeBoost(initialBoost);
+        newLeaf.InitializeInheritedBoost(initialBoost);
 
         if (rightTilt)
         {
@@ -68,6 +68,17 @@ public class LeafScript : PlantPartFam, IPointerClickHandler
         {
             RevokeBuy();
             ToggleShine(false);
+        }
+    }
+
+    protected override void BuyLevelUp()
+    {
+        if(TryPayGrowth(lvlUpCost))
+        {
+            lvl++;
+            lvlUpCost = LeafStats.LvlCost.AdvanceStat(lvl, generation, LibrarySingleton.Instance.GenerationScalingForCosts);
+            growthRate = LeafStats.Growth.AdvanceStat(lvl);
+            maxStorage = LeafStats.Storage.AdvanceStat(lvl);
         }
     }
 

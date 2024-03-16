@@ -29,10 +29,11 @@ public struct BonsaiVar
     /// <param name="lvl">the new level achieved</param>
     /// <param name="generation">generation of PlantPart</param>
     /// <param name="coefficient">scaling coefficient (should become constant after calibration)</param>
-    /// <param name="inversePropotionalToGeneration"> set true if cost is to go down as generation increases </param>
+    /// <param name="inversePropotionalToGeneration"> set true if cost is to go down as generation increases</param>
     /// <returns></returns>
     public float AdvanceStat(int lvl, int generation, float coefficient, bool inversePropotionalToGeneration = false) 
     {
-        return MathfExt.BonsaiFunct(MathfExt.BonsaiFunct(varBase, varScale, lvl), inversePropotionalToGeneration? 1/generation : generation, coefficient);
+        bool inverted = inversePropotionalToGeneration && generation != 0;
+        return MathfExt.BonsaiFunct(MathfExt.BonsaiFunct(varBase, varScale, lvl), inverted? 1/generation : generation, coefficient);
     }
 }
